@@ -15,6 +15,11 @@ namespace Clock
         public MainForm()
         {
             InitializeComponent();
+            this.Location = new Point
+                (
+                    Screen.PrimaryScreen.Bounds.Width - this.Width - 50,
+                    50
+                );
         }
 
         private void timer_Tick(object sender, EventArgs e)
