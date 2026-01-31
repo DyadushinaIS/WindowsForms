@@ -26,6 +26,8 @@ namespace Clock
                 );
             if (checkBoxShowDate.Checked)
                 labelTime.Text += $"\n{DateTime.Now.ToString("yyyy.MM.dd")}";
+            if (checkBoxShowWeekday.Checked)
+                labelTime.Text += $"\n{DateTime.Now.DayOfWeek}";
         }
     }
 }
