@@ -77,6 +77,7 @@
             // checkBoxShowDate
             // 
             this.checkBoxShowDate.AutoSize = true;
+            this.checkBoxShowDate.ContextMenuStrip = this.contextMenuStrip;
             this.checkBoxShowDate.Font = new System.Drawing.Font("Microsoft Sans Serif", 16.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.checkBoxShowDate.Location = new System.Drawing.Point(23, 251);
             this.checkBoxShowDate.Name = "checkBoxShowDate";
@@ -113,6 +114,7 @@
             this.notifyIcon.Icon = ((System.Drawing.Icon)(resources.GetObject("notifyIcon.Icon")));
             this.notifyIcon.Text = "Clock PV_522";
             this.notifyIcon.Visible = true;
+            this.notifyIcon.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.notifyIcon_MouseDoubleClick);
             // 
             // contextMenuStrip
             // 
@@ -141,6 +143,7 @@
             this.tsmiTopmost.Name = "tsmiTopmost";
             this.tsmiTopmost.Size = new System.Drawing.Size(210, 24);
             this.tsmiTopmost.Text = "Topmost";
+            this.tsmiTopmost.Click += new System.EventHandler(this.tsmiTopmost_Click);
             // 
             // tsmiShowControls
             // 
@@ -160,6 +163,7 @@
             this.tsmiShowDate.Name = "tsmiShowDate";
             this.tsmiShowDate.Size = new System.Drawing.Size(210, 24);
             this.tsmiShowDate.Text = "Show date";
+            this.tsmiShowDate.Click += new System.EventHandler(this.tsmiShowDate_Click);
             // 
             // tsmiShowWeekday
             // 
@@ -167,6 +171,7 @@
             this.tsmiShowWeekday.Name = "tsmiShowWeekday";
             this.tsmiShowWeekday.Size = new System.Drawing.Size(210, 24);
             this.tsmiShowWeekday.Text = "Show weekday";
+            this.tsmiShowWeekday.Click += new System.EventHandler(this.tsmiShowWeekday_Click);
             // 
             // toolStripSeparator2
             // 
@@ -190,15 +195,19 @@
             // 
             // tsmiForegroundColor
             // 
+            this.tsmiForegroundColor.CheckOnClick = true;
             this.tsmiForegroundColor.Name = "tsmiForegroundColor";
             this.tsmiForegroundColor.Size = new System.Drawing.Size(224, 26);
             this.tsmiForegroundColor.Text = "Foreground color";
+            this.tsmiForegroundColor.Click += new System.EventHandler(this.tsmiForegroundColor_Click);
             // 
             // tsmiBackgroundColor
             // 
+            this.tsmiBackgroundColor.CheckOnClick = true;
             this.tsmiBackgroundColor.Name = "tsmiBackgroundColor";
             this.tsmiBackgroundColor.Size = new System.Drawing.Size(224, 26);
             this.tsmiBackgroundColor.Text = "Background color";
+            this.tsmiBackgroundColor.Click += new System.EventHandler(this.tsmiBackgroundColor_Click);
             // 
             // toolStripSeparator3
             // 
@@ -233,6 +242,7 @@
             this.tsmiExit.Name = "tsmiExit";
             this.tsmiExit.Size = new System.Drawing.Size(210, 24);
             this.tsmiExit.Text = "Exit";
+            this.tsmiExit.Click += new System.EventHandler(this.tsmiExit_Click);
             // 
             // MainForm
             // 

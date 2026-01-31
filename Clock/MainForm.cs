@@ -55,5 +55,46 @@ namespace Clock
         {
             SetVisibility(true);
         }
+
+        private void tsmiShowDate_Click(object sender, EventArgs e)
+        {
+            ToolStripMenuItem item = (ToolStripMenuItem)sender;
+            if (item.Checked) 
+            labelTime.Text+= $"\n{DateTime.Now.ToString("yyyy.MM.dd")}";
+        }
+
+        private void tsmiShowWeekday_Click(object sender, EventArgs e)
+        {
+            labelTime.Text += $"\n{DateTime.Now.DayOfWeek}";
+        }
+        private void tsmiForegroundColor_Click(object sender, EventArgs e)
+        {
+            ToolStripMenuItem item = (ToolStripMenuItem)sender;
+            labelTime.ForeColor = item.Checked ? Color.Green : Color.Black;
+        }
+
+        private void tsmiBackgroundColor_Click(object sender, EventArgs e)
+        {
+            ToolStripMenuItem item = (ToolStripMenuItem)sender;
+            labelTime.BackColor = item.Checked ? Color.Yellow : Color.Blue;
+        }
+
+        private void tsmiExit_Click(object sender, EventArgs e)
+        {
+            this.Close();
+        }
+
+        private void notifyIcon_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            this.Show();
+            this.Activate();
+        }
+
+        private void tsmiTopmost_Click(object sender, EventArgs e)
+        {
+            ToolStripMenuItem item = (ToolStripMenuItem)sender;
+            this.TopMost = item.Checked;
+        }
+
     }
 }
