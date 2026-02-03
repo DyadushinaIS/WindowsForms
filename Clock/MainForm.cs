@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Drawing.Text;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -24,11 +25,27 @@ namespace Clock
 				);
 			tsmiShowControls.Checked = true;
 			backgroundDialog = new ColorDialog();
-			foregroundDialog = new ColorDialog();
+			foregroundDialog = new ColorDialog();			
 		}
+
 
 		private void timer_Tick(object sender, EventArgs e)
 		{
+			//блок кода с кастомным шрифтом
+			
+			{ 
+			// Имя файла со шрифтом
+				string fontPath = "orange juice 2.0.ttf";     //файл лежит в папке bin\Debug
+
+				// создаем коллекцию шрифтов и добавляем в нее шрифт
+				PrivateFontCollection fontCollection = new PrivateFontCollection();
+				fontCollection.AddFontFile(fontPath);
+
+				// Создаём шрифт и применяем
+				labelTime.Font = new Font(fontCollection.Families[0], 42f, FontStyle.Regular);
+			}
+
+
 			labelTime.Text = DateTime.Now.ToString
 				(
 				"hh:mm:ss tt",
