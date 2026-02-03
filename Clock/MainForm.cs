@@ -42,7 +42,8 @@ namespace Clock
 				fontCollection.AddFontFile(fontPath);
 
 				// Создаём шрифт и применяем
-				labelTime.Font = new Font(fontCollection.Families[0], 42f, FontStyle.Regular);
+				Font MyFont= new Font(fontCollection.Families[0], 42f, FontStyle.Regular);
+				labelTime.Font = MyFont;
 			}
 
 
