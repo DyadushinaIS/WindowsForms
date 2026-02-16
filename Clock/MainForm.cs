@@ -3,11 +3,14 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
-using System.Drawing.Text;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.IO;
+using System.Diagnostics;
+using Microsoft.Win32;
+using System.Runtime.InteropServices;
 
 namespace Clock
 {
@@ -15,6 +18,9 @@ namespace Clock
 	{
 		ColorDialog backgroundDialog;
 		ColorDialog foregroundDialog;
+		FontDialog fontDialog;
+		bool mouseDown = false;
+		Point mouseLocation;
 		public MainForm()
 		{
 			InitializeComponent();
@@ -25,28 +31,70 @@ namespace Clock
 				);
 			tsmiShowControls.Checked = true;
 			backgroundDialog = new ColorDialog();
-			foregroundDialog = new ColorDialog();			
+			foregroundDialog = new ColorDialog();
+			//fontDialog = new FontDialog(this);
+			LoadSettings();
+			//AllocConsole();
 		}
+		[DllImport("kernel32.dll")]
+		public static extern bool AllocConsole();
+		[DllImport("kernel32.dll")]
+		public static extern bool FreeConsole();
 
+		void SaveSettings()
+		{
+			Directory.SetCurrentDirectory($"{Application.ExecutablePath}\\..\\..\\..");
+			string filename = "Settings.ini";
+			StreamWriter writer = new StreamWriter(filename);
+			writer.WriteLine($"{this.Location.X}x{this.Location.Y}");
+			writer.WriteLine(tsmiTopmost.Checked);
+			writer.WriteLine(tsmiShowControls.Checked);
+			writer.WriteLine(tsmiShowDate.Checked);
+			writer.WriteLine(tsmiShowWeekday.Checked);
+			writer.WriteLine(tsmiAutorun.Checked);
+			writer.WriteLine(labelTime.BackColor.ToArgb());
+			writer.WriteLine(labelTime.ForeColor.ToArgb());
+			writer.WriteLine(fontDialog.FontFile);
+			writer.WriteLine(fontDialog.FontSize);
+			writer.Close();
+			Process.Start("notepad", filename);
+		}
+		void LoadSettings()
+		{
+			Directory.SetCurrentDirectory($"{Application.ExecutablePath}\\..\\..\\..");
+			StreamReader reader = null;
+			try
+			{
+				reader = new StreamReader("Settings.ini");
+				string location = reader.ReadLine();
+				this.Location = new Point
+					(
+					Convert.ToInt16(location.Split('x').First()),
+					Convert.ToInt16(location.Split('x').Last())
+					);
+				tsmiTopmost.Checked = bool.Parse(reader.ReadLine());
+				tsmiShowControls.Checked = bool.Parse(reader.ReadLine());
+				tsmiShowDate.Checked = bool.Parse(reader.ReadLine());
+				tsmiShowWeekday.Checked = bool.Parse(reader.ReadLine());
+				tsmiAutorun.Checked = bool.Parse(reader.ReadLine());
+				labelTime.BackColor = backgroundDialog.Color = Color.FromArgb(Convert.ToInt32(reader.ReadLine()));
+				labelTime.ForeColor = foregroundDialog.Color = Color.FromArgb(Convert.ToInt32(reader.ReadLine()));
+				//fontDialog = new FontDialog(this);
+				//fontDialog.FontFile = reader.ReadLine();
+				fontDialog = new FontDialog(this, reader.ReadLine());
+				fontDialog.FontSize = (float)Convert.ToDouble(reader.ReadLine());
+				labelTime.Font = fontDialog.ApplyFontExample(fontDialog.FontFile);
+				reader.Close();
+			}
+			catch (Exception ex)
+			{
+				MessageBox.Show(this, ex.Message);
+			}
+			if (reader != null) reader.Close();
+		}
 
 		private void timer_Tick(object sender, EventArgs e)
 		{
-			//блок кода с кастомным шрифтом
-			
-			{ 
-			// Имя файла со шрифтом
-				string fontPath = "orange juice 2.0.ttf";     //файл лежит в папке bin\Debug
-
-				// создаем коллекцию шрифтов и добавляем в нее шрифт
-				PrivateFontCollection fontCollection = new PrivateFontCollection();
-				fontCollection.AddFontFile(fontPath);
-
-				// Создаём шрифт и применяем
-				Font MyFont= new Font(fontCollection.Families[0], 42f, FontStyle.Regular);
-				labelTime.Font = MyFont;
-			}
-
-
 			labelTime.Text = DateTime.Now.ToString
 				(
 				"hh:mm:ss tt",
@@ -113,6 +161,63 @@ namespace Clock
 		{
 			if (foregroundDialog.ShowDialog() == DialogResult.OK)
 				labelTime.ForeColor = foregroundDialog.Color;
+		}
+
+		private void tsmiFont_Click(object sender, EventArgs e)
+		{
+			if (fontDialog.ShowDialog() == DialogResult.OK)
+			{
+				labelTime.Font = fontDialog.Font;
+			}
+		}
+
+		private void tsmiAutorun_CheckedChanged(object sender, EventArgs e)
+		{
+			string key_name = "Clock_PV_522";
+			RegistryKey rk = Registry.CurrentUser.
+				OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true);//true - открыть ветку на запись.
+			if (tsmiAutorun.Checked) rk.SetValue(key_name, Application.ExecutablePath);
+			else rk.DeleteValue(key_name, false);
+			//false - НЕ бросать исключение при отсутствии удаляемой ветки.
+			rk.Dispose();
+		}
+
+		private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
+		{
+			SaveSettings();
+		}
+
+		private void labelTime_MouseMove(object sender, MouseEventArgs e)
+		{
+			//Console.Clear();
+			//if(mouseDown)this.Location = e.Location;
+			//Console.WriteLine($"MouseMove: Window:{this.Location.X}x{this.Location.Y};Mouse:{e.X}x{e.Y};MouseLocation:{e.Location}");
+			Console.WriteLine($"Window location:{this.Location};\tCursor position:{Cursor.Position}\t{e.Location}");
+			if (mouseDown) this.Location = new Point
+				 (
+					 Cursor.Position.X - mouseLocation.X,
+					 Cursor.Position.Y - mouseLocation.Y
+				 );
+			Console.WriteLine(new Point
+				(
+					Cursor.Position.X - e.Location.X,
+					Cursor.Position.Y - e.Location.Y
+				));
+			Console.WriteLine("\n======================================\n");
+		}
+
+		private void labelTime_MouseDown(object sender, MouseEventArgs e)
+		{
+			if (e.Button == MouseButtons.Left)
+			{
+				mouseDown = true;
+				mouseLocation = new Point(e.Location.X, e.Location.Y);
+			}
+		}
+
+		private void labelTime_MouseUp(object sender, MouseEventArgs e)
+		{
+			if (e.Button == MouseButtons.Left) mouseDown = false;
 		}
 	}
 }
